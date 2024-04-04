@@ -14,12 +14,16 @@ impl Calculator {
             .resizable(false)
             .open(&mut self.is_opened)
             .show(ctx, |ui| {
-                ui.add(
+                let text = ui.add(
                     egui::TextEdit::multiline(&mut self.text_result)
                         .horizontal_align(egui::Align::RIGHT)
                         .desired_rows(3)
                         .desired_width(f32::INFINITY),
                 );
+
+                if text.double_clicked() {
+                    self.text_result = String::new();
+                }
 
                 ui.columns(4, |col| {
                     if col[0].button("7").clicked() {

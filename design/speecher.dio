@@ -1,0 +1,34 @@
+<mxfile host="65bd71144e">
+    <diagram id="thJxiTdRZUJTzhQkjLJi" name="Page-1">
+        <mxGraphModel dx="77" dy="59" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="40" width="360" height="280" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Speecher" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="40" y="40" width="360" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="List voices" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="80" width="340" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="370" y="80" width="20" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="text" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="120" width="340" height="150" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Save MP3" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="280" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Play" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="270" y="280" width="120" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="" style="triangle;whiteSpace=wrap;html=1;rotation=90;" vertex="1" parent="1">
+                    <mxGeometry x="375" y="87.5" width="10" height="15" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

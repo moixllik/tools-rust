@@ -1,8 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
-mod calculator;
+mod tools;
 
-use calculator::Calculator;
 use eframe::egui;
 
 fn main() -> eframe::Result<()> {
@@ -20,7 +19,8 @@ fn main() -> eframe::Result<()> {
 
 #[derive(Default)]
 struct MyApp {
-    calculator: Calculator,
+    calculator: tools::calculator::Calculator,
+    speecher: tools::speecher::Speecher,
 }
 
 impl MyApp {
@@ -32,14 +32,24 @@ impl MyApp {
 impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::TopBottomPanel::top("navbar").show(ctx, |ui| {
-            ui.menu_button("Tools", |ui| {
-                if ui.button("Calculator").clicked() {
-                    self.calculator.is_opened = true;
-                    ui.close_menu()
-                }
+            ui.horizontal(|ui| {
+                ui.menu_button("Math", |ui| {
+                    if ui.button("Calculator").clicked() {
+                        self.calculator.is_opened = true;
+                        ui.close_menu()
+                    }
+                });
+
+                ui.menu_button("Audio", |ui| {
+                    if ui.button("Speecher").clicked() {
+                        self.speecher.is_opened = true;
+                        ui.close_menu()
+                    }
+                });
             });
         });
 
         self.calculator.show(ctx);
+        self.speecher.show(ctx);
     }
 }
