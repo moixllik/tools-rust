@@ -1,7 +1,15 @@
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
+
+mod calculator;
+
+use calculator::Calculator;
 use eframe::egui;
 
 fn main() -> eframe::Result<()> {
-    let native_options = eframe::NativeOptions::default();
+    let native_options = eframe::NativeOptions {
+        viewport: egui::ViewportBuilder::default().with_inner_size([600.0, 800.0]),
+        ..Default::default()
+    };
 
     eframe::run_native(
         "Tools",
@@ -33,39 +41,5 @@ impl eframe::App for MyApp {
         });
 
         self.calculator.show(ctx);
-    }
-}
-
-/* CALCULATOR */
-#[derive(Default)]
-struct Calculator {
-    is_opened: bool,
-    text_result: String,
-}
-
-impl Calculator {
-    fn show(&mut self, ctx: &egui::Context) {
-        egui::Window::new("Calculator")
-            .resizable(false)
-            .open(&mut self.is_opened)
-            .show(ctx, |ui| {
-                egui::Grid::new("buttons").show(ui, |ui| {
-                    ui.add(
-                        egui::TextEdit::multiline(&mut self.text_result)
-                            .horizontal_align(egui::Align::RIGHT)
-                            .desired_rows(3),
-                    );
-                    ui.end_row();
-                    
-                    let mut limit = 0;
-                    for ch in "7 8 9 / 4 5 6 * 1 2 3 - 0 . = +".split(" ") {
-                        if ui.button(ch).clicked() {};
-                        limit += 1;
-                        if limit % 4 == 0 {
-                            ui.end_row();
-                        }
-                    }
-                })
-            });
     }
 }
