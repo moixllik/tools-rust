@@ -1,111 +1,78 @@
 use eframe::egui;
 
-#[derive(Default)]
+use super::View;
+
+const BUTTONS: &str = "7 8 9 +|4 5 6 -|1 2 3 *|0 . = /";
+
+#[derive(Default, Debug)]
 pub struct Calculator {
-    pub is_opened: bool,
-    text_result: String,
-    result: f64,
-    back_line: String,
+    result_text: String,
 }
 
-impl Calculator {
-    pub fn show(&mut self, ctx: &egui::Context) {
+impl super::Tool for Calculator {
+    fn show(&mut self, ctx: &egui::Context, open: &mut bool) {
         egui::Window::new("Calculator")
             .resizable(false)
-            .open(&mut self.is_opened)
-            .show(ctx, |ui| {
-                let text = ui.add(
-                    egui::TextEdit::multiline(&mut self.text_result)
-                        .horizontal_align(egui::Align::RIGHT)
-                        .desired_rows(3)
-                        .desired_width(f32::INFINITY),
-                );
-
-                if text.double_clicked() {
-                    self.text_result = String::new();
-                }
-
-                ui.columns(4, |col| {
-                    if col[0].button("7").clicked() {
-                        self.text_result += "7";
-                    }
-                    if col[1].button("8").clicked() {
-                        self.text_result += "8";
-                    }
-                    if col[2].button("9").clicked() {
-                        self.text_result += "9";
-                    }
-                    if col[3].button("/").clicked() {
-                        self.text_result += "\n/\n";
-                    }
-                });
-
-                ui.columns(4, |col| {
-                    if col[0].button("4").clicked() {
-                        self.text_result += "4";
-                    }
-                    if col[1].button("5").clicked() {
-                        self.text_result += "5";
-                    }
-                    if col[2].button("6").clicked() {
-                        self.text_result += "6";
-                    }
-                    if col[3].button("*").clicked() {
-                        self.text_result += "\n*\n";
-                    }
-                });
-
-                ui.columns(4, |col| {
-                    if col[0].button("1").clicked() {
-                        self.text_result += "1";
-                    }
-                    if col[1].button("2").clicked() {
-                        self.text_result += "2";
-                    }
-                    if col[2].button("3").clicked() {
-                        self.text_result += "3";
-                    }
-                    if col[3].button("-").clicked() {
-                        self.text_result += "\n-\n";
-                    }
-                });
-
-                ui.columns(4, |col| {
-                    if col[0].button("0").clicked() {
-                        self.text_result += "0";
-                    }
-                    if col[1].button(".").clicked() {
-                        self.text_result += ".";
-                    }
-                    if col[2].button("=").clicked() {
-                        for line in self.text_result.clone().split("\n") {
-                            if let Ok(num) = line.parse::<f64>() {
-                                match self.back_line.as_str() {
-                                    "+" => self.result += num,
-                                    "-" => self.result -= num,
-                                    "*" => self.result *= num,
-                                    "/" => {
-                                        if num != 0.0 {
-                                            self.result /= num
-                                        } else {
-                                            self.text_result = "ERROR".to_string();
-                                        }
-                                    }
-                                    _ => self.result = num,
-                                };
-                                self.back_line = "".to_string();
-                            } else {
-                                self.back_line = line.to_string();
-                            };
-                        }
-                        if self.text_result != "ERROR".to_string() {
-                            self.text_result = self.result.to_string();
-                        }
-                    }
-                    if col[3].button("+").clicked() {
-                        self.text_result += "\n+\n";
-                    }
-                });
-            });
+            .open(open)
+            .show(ctx, |ui| self.ui(ui));
     }
+}
+
+impl super::View for Calculator {
+    fn ui(&mut self, ui: &mut egui::Ui) {
+        let text = ui.add(
+            egui::TextEdit::multiline(&mut self.result_text)
+                .horizontal_align(egui::Align::RIGHT)
+                .desired_rows(3)
+                .desired_width(f32::INFINITY),
+        );
+
+        if text.double_clicked() {
+            self.result_text = String::new();
+        }
+
+        for row in BUTTONS.split("|") {
+            let cols: Vec<&str> = row.split(" ").collect();
+            ui.columns(cols.len(), |col| {
+                for (index, item) in cols.iter().enumerate() {
+                    if col[index].button(item.to_string()).clicked() {
+                        match item {
+                            &"+" | &"-" | &"*" | &"/" => {
+                                self.result_text += format!("\n{}\n", item).as_str()
+                            }
+                            &"=" => self.result_text = calculate(&self.result_text),
+                            _ => self.result_text += item,
+                        }
+                    }
+                }
+            });
+        }
+    }
+}
+
+fn calculate(result_text: &String) -> String {
+    let mut result = 0.0;
+    let mut line_back = String::new();
+
+    for line in result_text.split("\n") {
+        if let Ok(num) = line.parse::<f64>() {
+            match line_back.as_str() {
+                "+" => result += num,
+                "-" => result -= num,
+                "*" => result *= num,
+                "/" => {
+                    if num != 0.0 {
+                        result /= num
+                    } else {
+                        return "ERROR".to_string();
+                    }
+                }
+                _ => result = num,
+            };
+            line_back = "".to_string();
+        } else {
+            line_back = line.to_string();
+        };
+    }
+    result.to_string()
 }

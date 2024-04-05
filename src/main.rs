@@ -3,29 +3,37 @@
 mod tools;
 
 use eframe::egui;
+use tools::{calculator::Calculator, speecher::Speecher, Tool};
 
 fn main() -> eframe::Result<()> {
     let native_options = eframe::NativeOptions {
-        viewport: egui::ViewportBuilder::default().with_inner_size([600.0, 800.0]),
+        viewport: egui::ViewportBuilder::default().with_inner_size([600.0, 500.0]),
         ..Default::default()
     };
 
     eframe::run_native(
         "Tools",
         native_options,
-        Box::new(|cc| Box::new(MyApp::new(cc))),
+        Box::new(|_cc| Box::<MyApp>::default()),
     )
 }
 
-#[derive(Default)]
 struct MyApp {
-    calculator: tools::calculator::Calculator,
-    speecher: tools::speecher::Speecher,
+    open: Vec<bool>,
+    calculator: Calculator,
+    speecher: Speecher,
 }
 
-impl MyApp {
-    fn new(_cc: &eframe::CreationContext<'_>) -> Self {
-        Self::default()
+impl Default for MyApp {
+    fn default() -> Self {
+        let mut speecher = Speecher::default();
+        speecher.voices = tools::speecher::voices_list();
+
+        Self {
+            open: vec![false; 2],
+            calculator: Calculator::default(),
+            speecher: speecher,
+        }
     }
 }
 
@@ -33,23 +41,29 @@ impl eframe::App for MyApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::TopBottomPanel::top("navbar").show(ctx, |ui| {
             ui.horizontal(|ui| {
+                egui::global_dark_light_mode_switch(ui);
+
+                ui.separator();
+
                 ui.menu_button("Math", |ui| {
                     if ui.button("Calculator").clicked() {
-                        self.calculator.is_opened = true;
-                        ui.close_menu()
+                        self.open[0] = true;
+                        ui.close_menu();
                     }
                 });
 
+                ui.separator();
+
                 ui.menu_button("Audio", |ui| {
                     if ui.button("Speecher").clicked() {
-                        self.speecher.is_opened = true;
-                        ui.close_menu()
+                        self.open[1] = true;
+                        ui.close_menu();
                     }
                 });
             });
         });
 
-        self.calculator.show(ctx);
-        self.speecher.show(ctx);
+        self.calculator.show(ctx, &mut self.open[0]);
+        self.speecher.show(ctx, &mut self.open[1]);
     }
 }
